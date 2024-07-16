@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ article.title }} - SunGaze.org</title>
+    <link rel="stylesheet" href="../static/css/styles.css">
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <a href="../index.html" class="nav-link">Home</a>
+            <button id="dark-mode-toggle" class="nav-link">Toggle Dark Mode</button>
+        </nav>
+        <h1>SunGaze.org</h1>
+    </header>
+    <main>
+        <div class="article-container">
+            <h2>{{ article.title }}</h2>
+            <img src="../{{ article.image }}" alt="{{ article.title }}">
+            <div class="article-content">{{ article.full_content | safe }}</div>
+            <div id="disqus_thread"></div>
+            <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+            <div class="back-link">
+                <a href="../index.html">&#8592; Back to Home</a>
+            </div>
+        </div>
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof marked !== 'undefined') {
+                const contentDiv = document.querySelector('.article-content');
+                contentDiv.innerHTML = marked.parse(contentDiv.textContent);
+            }
+        });
+
+        var disqus_config = function () {
+            this.page.url = window.location.href;
+            this.page.identifier = "{{ article.slug }}";
+        };
+        (function() {
+            var d = document, s = d.createElement('script');
+            s.src = 'https://sungaze-org.disqus.com/embed.js';
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+        })();
+    </script>
+    <script src="../static/js/scripts.js"></script>
+</body>
+</html>
