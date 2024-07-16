@@ -79,7 +79,7 @@ function loadArticles(page) {
                     articleDiv.classList.add('dark-mode');
                 }
                 articleDiv.innerHTML = `
-                    <a href="article.html?slug=${article.slug}">
+                    <a href="articles/${article.slug}.html">
                         <img src="${article.image}" alt="${article.title}">
                         <h2>${article.title}</h2>
                         <p>${article.snippet}</p>
@@ -117,11 +117,30 @@ function loadArticle(slug) {
             document.getElementById('article-heading').innerText = article.title;
             document.getElementById('article-image').src = article.image;
             document.getElementById('article-image').alt = article.title;
-            document.getElementById('article-content').innerHTML = marked.parse(article.full_content);
+            
+            // Determine if the content is Markdown or HTML
+            if (article.full_content.startsWith('<')) {
+                // Assume it's HTML if it starts with an HTML tag
+                document.getElementById('article-content').innerHTML = article.full_content;
+            } else {
+                // Otherwise, treat it as Markdown
+                document.getElementById('article-content').innerHTML = marked(article.full_content);
+            }
 
             if (window.location.hostname === '127.0.0.1') {
                 document.getElementById('edit-link').style.display = 'block';
                 document.getElementById('delete-link').style.display = 'block';
+            }
+
+            // Reload Disqus for the new article
+            if (typeof DISQUS !== 'undefined') {
+                DISQUS.reset({
+                    reload: true,
+                    config: function () {
+                        this.page.url = window.location.href;
+                        this.page.identifier = slug;
+                    }
+                });
             }
         });
 }

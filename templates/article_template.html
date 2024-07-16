@@ -18,7 +18,13 @@
         <div class="article-container">
             <h2>{{ article.title }}</h2>
             <img src="../{{ article.image }}" alt="{{ article.title }}">
-            <div class="article-content">{{ article.full_content | safe }}</div>
+            <div class="article-content">
+                {% if article.full_content.startswith('<') %}
+                    {{ article.full_content | safe }}
+                {% else %}
+                    {{ article.full_content | markdown | safe }}
+                {% endif %}
+            </div>
             <div id="disqus_thread"></div>
             <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
             <div class="back-link">
@@ -28,13 +34,6 @@
     </main>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            if (typeof marked !== 'undefined') {
-                const contentDiv = document.querySelector('.article-content');
-                contentDiv.innerHTML = marked.parse(contentDiv.textContent);
-            }
-        });
-
         var disqus_config = function () {
             this.page.url = window.location.href;
             this.page.identifier = "{{ article.slug }}";
